@@ -4,121 +4,72 @@ import QuestionData from "./questionsApi";
 import ProfileArea from "./profilearea";
 
 export default function QuestionArea() {
-  const [questionArrayData, setQuestionArrayData] = useState([]);
-  const [visibleQuestion, setVisibleQuestion] = useState([]);
-  const [questionNumberValue, setQuestionNumberValue] = useState(0);
-  const [allSectionToggle, setAllSectionToggle] = useState(true);
-  const [physicsToggle, setPhysicsToggle] = useState(false);
-  const [chemistryToggle, setChemistryToggle] = useState(false);
-  const [mathToggle, setMathToggle] = useState(false);
-  const [physicsQuestionData, setPhysicsQuestionData] = useState([]);
-  const [chemistryQuestionData, setChemistryQuestionData] = useState([]);
-  const [mathQuestionData, setMathQuestionData] = useState([]);
-  useEffect(() => {
-    setQuestionArrayData(QuestionData);
-    let physicsCount = QuestionData.filter((value) => value.type === "physics");
-    let chemistryCount = QuestionData.filter((value) => value.type === "chemistry");
-    let mathCount = QuestionData.filter((value) => value.type === "math");
+  const [questionArrayData, setQuestionArrayData] = useState(QuestionData);
+  const [visibleQuestion, setVisibleQuestion] = useState(questionArrayData[0]);
 
-    setPhysicsQuestionData(physicsCount);
-    setChemistryQuestionData(chemistryCount);
-    setMathQuestionData(mathCount);
-  }, [QuestionData]);
+  const [selectedId, setSelectedId] = useState();
+  const [selectAnswer, setSelectAnswer] = useState("");
+  const selectedOptionValue = (value, id) => {
+    setSelectAnswer(value);
+    setSelectedId(id);
+    let userAnswer = questionArrayData.find((i) => i.Q === id);
+    userAnswer.userAns = value;
+    userAnswer.userStatus = "answered";
 
-  useEffect(() => {
-    setVisibleQuestion(questionArrayData[questionNumberValue]);
-  }, [questionNumberValue, questionArrayData]);
+    setQuestionArrayData(questionArrayData);
+  };
+  console.log(questionArrayData, "newData");
 
   const nextQuestionHandler = () => {
-    if (questionNumberValue < questionArrayData.length - 1) {
-      setQuestionNumberValue(questionNumberValue + 1);
+    if (visibleQuestion.Q >= questionArrayData.length) {
+      return;
+    }
+    let index = questionArrayData.findIndex((item) => item.Q === visibleQuestion.Q);
+    if (index > -1) {
+      setVisibleQuestion(questionArrayData[index + 1]);
+    }
+    if (selectAnswer.length === 0) {
+      let userAnswer = questionArrayData.find((i) => i.Q === selectedId);
+      userAnswer.userStatus = "answered";
     }
   };
-  const prevQuestionHandler = () => {
-    if (questionNumberValue > 0) {
-      setQuestionNumberValue(questionNumberValue - 1);
-    }
-  };
-  const allSectionHandler = () => {
-    setQuestionNumberValue(0);
-    setAllSectionToggle(true);
-    setPhysicsToggle(false);
-    setMathToggle(false);
-    setChemistryToggle(false);
-    setQuestionArrayData(QuestionData);
-  };
-  const physicsHandler = () => {
-    setQuestionNumberValue(0);
-    setAllSectionToggle(false);
-    setPhysicsToggle(true);
-    setMathToggle(false);
-    setChemistryToggle(false);
 
-    setQuestionArrayData(physicsQuestionData);
-  };
-  const chemistryHandler = () => {
-    setQuestionNumberValue(0);
-    setAllSectionToggle(false);
-    setPhysicsToggle(false);
-    setMathToggle(false);
-    setChemistryToggle(true);
-    setQuestionArrayData(chemistryQuestionData);
-  };
-  const mathsHandler = () => {
-    setQuestionNumberValue(0);
-    setAllSectionToggle(false);
-    setPhysicsToggle(false);
-    setMathToggle(true);
-    setChemistryToggle(false);
-    setQuestionArrayData(mathQuestionData);
+  const prevQuestionHandler = () => {
+    if (visibleQuestion.Q <= 1) {
+      return;
+    }
+    let index = questionArrayData.findIndex((item) => item.Q === visibleQuestion.Q);
+    if (index > -1) {
+      setVisibleQuestion(questionArrayData[index - 1]);
+    }
   };
 
   return (
     <div className="main-container-data-box">
       <div className="question-full-page">
         <div className="question-button-box">
-          <button
-            className={allSectionToggle ? "question-button-true" : "question-buttons"}
-            onClick={allSectionHandler}
-          >
-            ALL SECTIONS
-          </button>
-          <button
-            className={physicsToggle ? "question-button-true" : "question-buttons"}
-            onClick={physicsHandler}
-          >
-            PHYSICS
-          </button>
-          <button
-            className={chemistryToggle ? "question-button-true" : "question-buttons"}
-            onClick={chemistryHandler}
-          >
-            CHEMISTRY
-          </button>
-          <button
-            className={mathToggle ? "question-button-true" : "question-buttons"}
-            onClick={mathsHandler}
-          >
-            MATHS
-          </button>
+          <button className="question-button-true">ALL SECTIONS</button>
+          <button className="question-buttons">PHYSICS</button>
+          <button className="question-buttons">CHEMISTRY</button>
+          <button className="question-buttons">MATHS</button>
         </div>
         <div className="breakline"></div>
         <div>
-          <Questions visibleQuestion={visibleQuestion} />
+          <Questions visibleQuestion={visibleQuestion} selectedOptionValue={selectedOptionValue} />
         </div>
         <div className="question-button-box">
           <button className="question-buttons">CLEAR RESPONSE</button>
           <button className="question-buttons">REVIEW</button>
           <button className="question-buttons">DUMP</button>
           <button
-            className={questionNumberValue > 0 ? "question-buttons" : "question-buttons1"}
+            className={visibleQuestion.Q > 1 ? "question-buttons" : "question-buttons1"}
             onClick={prevQuestionHandler}
           >
             PREVIOUS
           </button>
           <button
             className={
-              questionNumberValue < questionArrayData.length - 1
+              visibleQuestion.Q < questionArrayData.length
                 ? "question-buttons"
                 : "question-buttons1"
             }
@@ -128,16 +79,7 @@ export default function QuestionArea() {
           </button>
         </div>
       </div>
-      <ProfileArea
-        setQuestionNumberValue={setQuestionNumberValue}
-        questionArrayData={questionArrayData}
-        setQuestionArrayData={setQuestionArrayData}
-        QuestionData={QuestionData}
-        setAllSectionToggle={setAllSectionToggle}
-        setChemistryToggle={setChemistryToggle}
-        setPhysicsToggle={setPhysicsToggle}
-        setMathToggle={setMathToggle}
-      />
+      <ProfileArea setVisibleQuestion={setVisibleQuestion} QuestionData={QuestionData} />
     </div>
   );
 }

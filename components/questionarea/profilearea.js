@@ -4,28 +4,14 @@ import Image from "next/image";
 
 const StatusBg = {
   not_visited: "white",
-  not_answered: "rgb(73, 209, 73)",
-  answered: "rgb(230, 93, 93)",
+  not_answered: "rgb(230, 93, 93)",
+  answered: "rgb(73, 209, 73)",
 };
 
-export default function ProfileArea({
-  setQuestionNumberValue,
-  setQuestionArrayData,
-  questionArrayData,
-  QuestionData,
-  setAllSectionToggle,
-  setChemistryToggle,
-  setMathToggle,
-  setPhysicsToggle,
-}) {
+export default function ProfileArea({ setVisibleQuestion, QuestionData }) {
   const [colorValue, setColorValue] = useState("");
   const numberHandler = (value) => {
-    setQuestionArrayData(QuestionData);
-    setAllSectionToggle(true);
-    setChemistryToggle(false);
-    setMathToggle(false);
-    setPhysicsToggle(false);
-    setQuestionNumberValue(value);
+    setVisibleQuestion(QuestionData[value]);
   };
 
   return (

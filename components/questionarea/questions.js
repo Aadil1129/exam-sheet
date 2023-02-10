@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
 
-export default function Questions({ visibleQuestion }) {
-  const selectAnswerHandler = () => {};
+export default function Questions({ visibleQuestion, selectedOptionValue }) {
+  const [selectedValue, setSelectedValue] = useState("");
+
+  useEffect(() => {
+    setSelectedValue(visibleQuestion.userAns);
+  }, [visibleQuestion]);
+
+  const selectAnswerHandler = (e) => {
+    setSelectedValue(e.target.value);
+    selectedOptionValue(e.target.value, visibleQuestion.Q);
+  };
+
   return (
     <div className="questions-fullpage">
       <div className="question-top">
@@ -27,8 +37,8 @@ export default function Questions({ visibleQuestion }) {
                   {i + 1}.
                   <input
                     type="radio"
-                    name="options"
                     value={value}
+                    checked={selectedValue === value}
                     id={value}
                     onChange={selectAnswerHandler}
                   />{" "}
