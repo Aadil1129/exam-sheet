@@ -12,10 +12,6 @@ export default function QuestionArea() {
   const selectedOptionValue = (value, id) => {
     setSelectAnswer(value);
     setSelectedId(id);
-    let userAnswer = questionArrayData.find((i) => i.Q === id);
-    userAnswer.userAns = value;
-    userAnswer.userStatus = "answered";
-
     setQuestionArrayData(questionArrayData);
   };
   console.log(questionArrayData, "newData");
@@ -28,7 +24,7 @@ export default function QuestionArea() {
     if (index > -1) {
       setVisibleQuestion(questionArrayData[index + 1]);
     }
-    if (selectAnswer.length === 0) {
+    if (selectAnswer.length > 0) {
       let userAnswer = questionArrayData.find((i) => i.Q === selectedId);
       userAnswer.userStatus = "answered";
     }
@@ -79,7 +75,7 @@ export default function QuestionArea() {
           </button>
         </div>
       </div>
-      <ProfileArea setVisibleQuestion={setVisibleQuestion} QuestionData={QuestionData} />
+      <ProfileArea setVisibleQuestion={setVisibleQuestion} questionArrayData={questionArrayData} />
     </div>
   );
 }

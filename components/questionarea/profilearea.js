@@ -8,10 +8,9 @@ const StatusBg = {
   answered: "rgb(73, 209, 73)",
 };
 
-export default function ProfileArea({ setVisibleQuestion, QuestionData }) {
-  const [colorValue, setColorValue] = useState("");
+export default function ProfileArea({ setVisibleQuestion, questionArrayData }) {
   const numberHandler = (value) => {
-    setVisibleQuestion(QuestionData[value]);
+    setVisibleQuestion(questionArrayData[value]);
   };
 
   return (
@@ -34,7 +33,7 @@ export default function ProfileArea({ setVisibleQuestion, QuestionData }) {
         </div>
         <div></div>
         <div className="profile-numbers-box">
-          {QuestionData.map((value, i) => {
+          {questionArrayData.map((value, i) => {
             return (
               <div key={i}>
                 <div
@@ -59,7 +58,7 @@ export default function ProfileArea({ setVisibleQuestion, QuestionData }) {
           <div className="legent-button-notvisited">Not visited</div>
         </div>
         <div className="profile-middle-all">
-          <div>{QuestionData.length} All Questions </div>
+          <div>{questionArrayData.length} All Questions </div>
         </div>
         <div style={{ margin: "1rem auto" }}>
           <div className="profile-legent-buttons">
