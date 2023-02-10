@@ -12,6 +12,9 @@ export default function QuestionArea() {
   const selectedOptionValue = (value, id) => {
     setSelectAnswer(value);
     setSelectedId(id);
+    let userAnswer = questionArrayData.find((i) => i.Q === id);
+    userAnswer.userAns = value;
+
     setQuestionArrayData(questionArrayData);
   };
   console.log(questionArrayData, "newData");
@@ -27,6 +30,7 @@ export default function QuestionArea() {
     if (selectAnswer.length > 0) {
       let userAnswer = questionArrayData.find((i) => i.Q === selectedId);
       userAnswer.userStatus = "answered";
+      setQuestionArrayData(questionArrayData);
     }
   };
 
@@ -37,6 +41,24 @@ export default function QuestionArea() {
     let index = questionArrayData.findIndex((item) => item.Q === visibleQuestion.Q);
     if (index > -1) {
       setVisibleQuestion(questionArrayData[index - 1]);
+    }
+  };
+  const dumbHandler = () => {
+    if (visibleQuestion.Q >= questionArrayData.length) {
+      return;
+    }
+    let index = questionArrayData.findIndex((item) => item.Q === visibleQuestion.Q);
+    if (index > -1) {
+      setVisibleQuestion(questionArrayData[index + 1]);
+    }
+    if (
+      visibleQuestion.userStatus === "answered" ||
+      visibleQuestion.userStatus === "not_answered"
+    ) {
+      visibleQuestion.userStatus = "not_visited";
+      visibleQuestion.userAns = "";
+      setSelectAnswer("");
+      setQuestionArrayData(questionArrayData);
     }
   };
 
@@ -56,7 +78,9 @@ export default function QuestionArea() {
         <div className="question-button-box">
           <button className="question-buttons">CLEAR RESPONSE</button>
           <button className="question-buttons">REVIEW</button>
-          <button className="question-buttons">DUMP</button>
+          <button className="question-buttons" onClick={dumbHandler}>
+            DUMP
+          </button>
           <button
             className={visibleQuestion.Q > 1 ? "question-buttons" : "question-buttons1"}
             onClick={prevQuestionHandler}
